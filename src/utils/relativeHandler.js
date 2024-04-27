@@ -12,7 +12,7 @@ export function relativeHandler(pointers) {
     '@': (synsetOffset) => relative.hypernym.push(synsetOffset),
     '@i': (synsetOffset) => relative.instanceHypernym.push(synsetOffset),
     '~': (synsetOffset) => relative.hyponym.push(synsetOffset),
-    // '~i': (synsetOffset) => relative.instanceHyponym.push(synsetOffset),
+    '~i': (synsetOffset) => relative.instanceHyponym.push(synsetOffset),
     '+': (synsetOffset) => relative.derivational.push(synsetOffset)
   }
   pointers.forEach(pointer => {
