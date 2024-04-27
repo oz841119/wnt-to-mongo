@@ -2,24 +2,28 @@ import wordnet from 'wordnet'
 import { addWords } from '../mongo/db.js'
 import mongoose from 'mongoose'
 import { PART_OF_SPEECH } from '../enums/index.js'
+import { relativeHandler } from './utils/relativeHandler.js'
 main()
 async function main() {
-  const REGEX = /\d/;
+  const REGEX = /[\d\s]/
   await wordnet.init(process.env['WNT_PATH']);
   const list = wordnet.list();
   const words = []
   for(let i = 0 ; i < list.length ; i++) {
-    if(i % 1000 === 0) {
+    if(i % 10000 === 0) {
       console.log(i + '/' + list.length)
     }
     const wordStr = list[i]
     if(REGEX.test(wordStr)) continue
     const wordDefinitions = await wordnet.lookup(wordStr)
     wordDefinitions.forEach((wordInfo) => {
+      const relative = relativeHandler(wordInfo.meta.pointers)
       words.push({
         word: wordStr,
         explanation: wordInfo.glossary,
-        partOfSpeech: PART_OF_SPEECH[wordInfo.meta.synsetType]
+        partOfSpeech: PART_OF_SPEECH[wordInfo.meta.synsetType],
+        synsetOffset: wordInfo.meta.synsetOffset,
+        relative: relative
       })
     })
   }
